@@ -37,4 +37,29 @@ router.post('/user-type-list', (req, res) => {
   });
 });
 
+router.post('/user-insert', (req, res) => {
+
+  const { name } = req.body;
+
+  if (!name) {
+    return res.json({ success: 0, message: 'Name is required' });
+  }
+
+  const created_at = Math.floor(Date.now() / 1000); // Unix timestamp
+
+  const sql = `INSERT INTO users (name, created_at) VALUES (?, ?)`;
+
+  db.query(sql, [name, created_at], (err, result) => {
+    if (err) {
+      return res.status(500).json({ success: 0, message: err.message });
+    }
+
+    res.json({
+      success: 1,
+      message: 'User inserted successfully',
+      inserted_id: result.insertId,
+      created_at
+    });
+  });
+});
 module.exports = router;

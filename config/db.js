@@ -1,12 +1,12 @@
-const mysql = require('mysql2');
+const mysql = require("mysql2")
 
 const db = mysql.createConnection({
-    host:'sql12.freesqldatabase.com',
-    user:'sql12787731',
-    password:'7lFYErHag7',
-    database:'sql12787731',
-    multipleStatements:true
-});
+	host: "sql12.freesqldatabase.com",
+	user: "sql12787731",
+	password: "7lFYErHag7",
+	database: "sql12787731",
+	multipleStatements: true,
+})
 
 // const db = mysql.createConnection({
 //     host:'localhost',
@@ -17,8 +17,9 @@ const db = mysql.createConnection({
 // });
 
 db.connect((err) => {
-    if(err) throw err;
-    console.log('MySQL Connected');
-});
+	if (err) throw err
+	console.log("MySQL Connected")
+})
 
-module.exports = db;
+module.exports = db
+// db commit

@@ -3,6 +3,7 @@ const router = express.Router()
 const db = require("../config/db")
 
 router.post("hey-api", (req, res) => {})
+router.post("hey-apiii", (req, res) => {})
 
 router.post("/user-type-list", (req, res) => {
 	const query = `

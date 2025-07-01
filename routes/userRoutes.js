@@ -1,6 +1,7 @@
-const express = require("express");
-const router = express.Router();
-const db = require("../config/db");
+// routes changes
+const express = require("express")
+const router = express.Router()
+const db = require("../config/db")
 
 router.post("hey-api", (req, res) => {});
 router.post("hey-apiii", (req, res) => {});

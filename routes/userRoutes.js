@@ -14,7 +14,7 @@ router.post("/user-list", (req, res) => {
         values = [id];
     } else {
         query = `
-            SELECT SQL_CALC_FOUND_ROWS * FROM users;
+            SELECT SQL_CALC_FOUND_ROWS * FROM users WHERE deleted_at IS NULL;
             SELECT FOUND_ROWS() AS total_records;
         `;
     }

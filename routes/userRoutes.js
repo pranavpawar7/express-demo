@@ -108,4 +108,35 @@ router.post("/user-insert", (req, res) => {
     });
 });
 
+router.post("/user-delete", (req, res) => {
+    const { id } = req.body;
+
+    let sql = "";
+    let values = [];
+    const created_at = Math.floor(Date.now() / 1000); // Unix timestamp
+    if (!id) {
+        return res.json({
+            success: 0,
+            message: "User Id is Required",
+        });
+    }
+
+    sql = `UPDATE users SET deleted_at = ? WHERE id = ?`;
+    values = [created_at, id];
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            return res.status(500).json({
+                success: 0,
+                message: err.message,
+            });
+        }
+
+        res.json({
+            success: 1,
+            message: "User Deleted Successfuly",
+        });
+    });
+});
+
 module.exports = router;

@@ -139,7 +139,7 @@ router.post("/user-delete", (req, res) => {
     });
 });
 
-router.post("user/:action", (req, res) => {
+router.post("/user/:action", (req, res) => {
     const action = req.params.action;
     const post = req.body;
 

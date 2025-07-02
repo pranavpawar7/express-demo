@@ -3,9 +3,6 @@ const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
 
-router.post("hey-api", (req, res) => {});
-router.post("hey-apiii", (req, res) => {});
-
 router.post("/user-list", (req, res) => {
     const query = `
     SELECT SQL_CALC_FOUND_ROWS * FROM users;
@@ -69,8 +66,3 @@ router.post("/user-insert", (req, res) => {
     });
 });
 module.exports = router;
-
-// Testdfasdishant
-// teset2fsdaffasddishant
-// Test
-// teset2

@@ -6,7 +6,7 @@ const db = require("../config/db");
 router.post("/user-list", (req, res) => {
     const { id } = req.body;
 
-    const query = "";
+    let query = "";
     let values = [];
 
     if (id && id != "") {

@@ -42,27 +42,36 @@ router.post("/user-list", (req, res) => {
 });
 
 router.post("/user-insert", (req, res) => {
-    const { name } = req.body;
+    const { name, id } = req.body;
 
     if (!name) {
         return res.json({ success: 0, message: "Name is required" });
     }
 
+    let sql = "";
     const created_at = Math.floor(Date.now() / 1000); // Unix timestamp
+    let values = [];
 
-    const sql = `INSERT INTO users (name, created_at) VALUES (?, ?)`;
+    if (id && id != "") {
+        sql = `UPDATE users SET name = ?, updated_at = ? WHERE id = ?`;
+        values = [name, created_at, id];
+    } else {
+        sql = `INSERT INTO users (name, created_at) VALUES (?, ?)`;
+        values = [name, created_at];
+    }
 
-    db.query(sql, [name, created_at], (err, result) => {
+    db.query(sql, values, (err, result) => {
         if (err) {
             return res.status(500).json({ success: 0, message: err.message });
         }
 
         res.json({
             success: 1,
-            message: "User inserted successfully",
-            inserted_id: result.insertId,
+            message: id ? "User updated successfully" : "User inserted successfully",
+            inserted_id: result.insertId || id,
             created_at,
         });
     });
 });
+
 module.exports = router;

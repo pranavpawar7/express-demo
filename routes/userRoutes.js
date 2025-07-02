@@ -22,7 +22,7 @@ router.post("/user-list", (req, res) => {
     db.query(query, values, (err, results) => {
         if (err) return res.status(500).json({ success: 0, message: err.message });
 
-        if (id && id !== "") {
+        if (id && id != "") {
             const user = results[0];
 
             if (!user) {
@@ -42,6 +42,7 @@ router.post("/user-list", (req, res) => {
                 data: {
                     id: user.id,
                     name: user.name,
+                    email: user.email,
                     created_at_formated: formattedDate,
                 },
             });
@@ -57,6 +58,7 @@ router.post("/user-list", (req, res) => {
                 return {
                     id: user.id,
                     name: user.name,
+                    email: user.email,
                     created_at_formated: formattedDate,
                 };
             });

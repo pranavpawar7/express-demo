@@ -25,22 +25,30 @@ router.post("/user-list", (req, res) => {
         const userTypes = results[0];
         const total = results[1][0].total_records;
 
-        const list = userTypes.map((type) => {
-            const date = new Date(type.created_at * 1000); // If timestamp in seconds
-            const formattedDate = date
-                .toLocaleString("en-GB", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                })
-                .replace(" ", " ")
-                .replace(",", ","); // To ensure format like 20 Jun, 2025
+        if (!id) {
+            const list = userTypes.map((type) => {
+                const date = new Date(type.created_at * 1000); // If timestamp in seconds
+                const formattedDate = date
+                    .toLocaleString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                    })
+                    .replace(" ", " ")
+                    .replace(",", ","); // To ensure format like 20 Jun, 2025
+                return {
+                    id: type.id,
+                    name: type.name,
+                    created_at_formated: formattedDate,
+                };
+            });
+        } else {
             return {
-                id: type.id,
-                name: type.name,
+                id: result.id,
+                name: result.name,
                 created_at_formated: formattedDate,
             };
-        });
+        }
 
         res.json({
             success: 1,

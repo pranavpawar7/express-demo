@@ -139,4 +139,14 @@ router.post("/user-delete", (req, res) => {
     });
 });
 
+router.post("users/:action", (req, res) => {
+    const action = req.params.action;
+    const post = req.body;
+
+    if (action == "save") {
+        res.json({
+            message: "save Api",
+        });
+    }
+});
 module.exports = router;

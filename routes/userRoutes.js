@@ -145,7 +145,15 @@ router.post("/user/:action", (req, res) => {
 
     if (action == "save") {
         return res.json({
-            message: "save Api",
+            message: "save Api Work",
+        });
+    } else if (action == "list") {
+        return res.json({
+            message: "List API Work",
+        });
+    } else if (action == "delete") {
+        return res.json({
+            message: "Delete API Work",
         });
     }
 });

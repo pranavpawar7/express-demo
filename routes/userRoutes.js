@@ -155,6 +155,10 @@ router.post("/user/:action", (req, res) => {
         return res.json({
             message: "Delete API Work",
         });
+    } else {
+        return res.json({
+            message: "Invalid Action",
+        });
     }
 });
 module.exports = router;

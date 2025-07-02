@@ -9,53 +9,67 @@ router.post("/user-list", (req, res) => {
     let query = "";
     let values = [];
 
-    if (id && id != "") {
-        query = `SELECT * FROM users WHERE id = ? `;
+    if (id && id !== "") {
+        query = `SELECT * FROM users WHERE id = ?`;
         values = [id];
     } else {
         query = `
-        SELECT SQL_CALC_FOUND_ROWS * FROM users;
-        SELECT FOUND_ROWS() AS total_records;
-      `;
+            SELECT SQL_CALC_FOUND_ROWS * FROM users;
+            SELECT FOUND_ROWS() AS total_records;
+        `;
     }
 
     db.query(query, values, (err, results) => {
         if (err) return res.status(500).json({ success: 0, message: err.message });
 
-        const userTypes = results[0];
-        const total = results[1][0].total_records;
+        if (id && id !== "") {
+            const user = results[0];
 
-        if (!id) {
-            const list = userTypes.map((type) => {
-                const date = new Date(type.created_at * 1000); // If timestamp in seconds
-                const formattedDate = date
-                    .toLocaleString("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                    })
-                    .replace(" ", " ")
-                    .replace(",", ","); // To ensure format like 20 Jun, 2025
+            if (!user) {
+                return res.json({ success: 0, message: "User not found" });
+            }
+
+            const date = new Date(user.created_at * 1000);
+            const formattedDate = date.toLocaleString("en-GB", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+            });
+
+            return res.json({
+                success: 1,
+                message: "User details found",
+                data: {
+                    id: user.id,
+                    name: user.name,
+                    created_at_formated: formattedDate,
+                },
+            });
+        } else {
+            const userList = results[0].map((user) => {
+                const date = new Date(user.created_at * 1000);
+                const formattedDate = date.toLocaleString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                });
+
                 return {
-                    id: type.id,
-                    name: type.name,
+                    id: user.id,
+                    name: user.name,
                     created_at_formated: formattedDate,
                 };
             });
-        } else {
-            return {
-                id: result.id,
-                name: result.name,
-                created_at_formated: formattedDate,
-            };
-        }
 
-        res.json({
-            success: 1,
-            message: id ? `${total} types found` : `user Details`,
-            list,
-            total_records: total,
-        });
+            const total = results[1][0].total_records;
+
+            return res.json({
+                success: 1,
+                message: `${total} users found`,
+                list: userList,
+                total_records: total,
+            });
+        }
     });
 });
 
@@ -93,3 +107,14 @@ router.post("/user-insert", (req, res) => {
 });
 
 module.exports = router;
+
+[
+    [],
+    [
+        [
+            {
+                total_record: 20,
+            },
+        ],
+    ],
+];

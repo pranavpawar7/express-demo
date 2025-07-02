@@ -4,12 +4,22 @@ const router = express.Router();
 const db = require("../config/db");
 
 router.post("/user-list", (req, res) => {
-    const query = `
-    SELECT SQL_CALC_FOUND_ROWS * FROM users;
-    SELECT FOUND_ROWS() AS total_records;
-  `;
+    const { id } = req.body;
 
-    db.query(query, (err, results) => {
+    const query = "";
+    let values = [];
+
+    if (id && id != "") {
+        query = `SELECT * FROM users WHERE id = ? `;
+        values = [id];
+    } else {
+        query = `
+        SELECT SQL_CALC_FOUND_ROWS * FROM users;
+        SELECT FOUND_ROWS() AS total_records;
+      `;
+    }
+
+    db.query(query, values, (err, results) => {
         if (err) return res.status(500).json({ success: 0, message: err.message });
 
         const userTypes = results[0];
@@ -34,7 +44,7 @@ router.post("/user-list", (req, res) => {
 
         res.json({
             success: 1,
-            message: `${total} types found`,
+            message: id ? `${total} types found` : `user Details`,
             list,
             total_records: total,
         });

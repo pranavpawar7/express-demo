@@ -218,6 +218,7 @@ router.post("/user-delete", (req, res) => {
 router.post("/user/:action", (req, res) => {
     const action = req.params.action;
     const post = req.body;
+    let created_at = Math.floor(Date.now() / 1000); // Unix timestamp
 
     if (action == "save") {
         return res.json({
@@ -230,7 +231,7 @@ router.post("/user/:action", (req, res) => {
         let values = [];
 
         // If searching, build dynamic WHERE
-        if (search && search.trim() !== "") {
+        if (search && search.trim() != "") {
             const searchColumns = ["name", "email"];
             const searchConditions = searchColumns.map((col) => `${col} LIKE ?`).join(" OR ");
             whereClause += ` AND (${searchConditions})`;
@@ -239,11 +240,15 @@ router.post("/user/:action", (req, res) => {
             searchColumns.forEach(() => values.push(`%${search}%`));
         }
 
-        if (id && id !== "") {
+        if (id && id != "") {
             const query = `SELECT * FROM users WHERE id = ?`;
             db.query(query, [id], (err, result) => {
-                if (err) return res.status(500).json({ success: 0, message: err.message });
-                if (!result.length) return res.json({ success: 0, message: "User not found" });
+                if (err) {
+                    return res.status(500).json({ success: 0, message: err.message });
+                }
+                if (!result.length) {
+                    return res.json({ success: 0, message: "User not found" });
+                }
 
                 const user = result[0];
                 const formattedDate = new Date(user.created_at * 1000).toLocaleString("en-GB", {
@@ -266,11 +271,12 @@ router.post("/user/:action", (req, res) => {
         } else {
             const query = `
             SELECT SQL_CALC_FOUND_ROWS * FROM users ${whereClause};
-            SELECT FOUND_ROWS() AS total_records;
-        `;
+            SELECT FOUND_ROWS() AS total_records; `;
 
             db.query(query, values, (err, results) => {
-                if (err) return res.status(500).json({ success: 0, message: err.message });
+                if (err) {
+                    return res.status(500).json({ success: 0, message: err.message });
+                }
 
                 const userList = results[0].map((user) => {
                     const formattedDate = new Date(user.created_at * 1000).toLocaleString("en-GB", {
@@ -302,11 +308,37 @@ router.post("/user/:action", (req, res) => {
         //     message: "List API Work",
         // });
     } else if (action == "delete") {
-        return res.json({
-            message: "Delete API Work",
+        let query = "";
+        let values = [];
+
+        let id = post.id;
+
+        if (!id) {
+            return res.json({
+                success: 0,
+                message: "User ID is Required ",
+            });
+        }
+
+        query = `UPDATE users SET deleted_at = ? WHERE id = ?`;
+        values = [created_at, id];
+
+        db.query(query, values, (err, result) => {
+            if (err) {
+                return res.status(500).json({ success: 0, message: err.message });
+            }
+            return res.json({
+                success: 1,
+                message: "User Delete Successfully",
+            });
         });
+
+        // return res.json({
+        //     message: "Delete API Work",
+        // });
     } else {
         return res.json({
+            success: 0,
             message: "Invalid Action",
         });
     }
